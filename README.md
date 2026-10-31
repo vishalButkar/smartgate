@@ -1,0 +1,2 @@
+# smartgate
+GCOERC_GATEPASS
