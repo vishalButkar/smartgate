@@ -1,0 +1,1574 @@
+/* ========================================
+   GLOBAL RESET
+======================================== */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100%;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+  background: #f4f7fb;
+}
+
+/* ========================================
+   FACULTY REGISTRATION PAGE
+======================================== */
+
+.faculty-page {
+  min-height: 100vh;
+  background: #f4f7fb;
+}
+
+/* HEADER */
+
+.faculty-header {
+  position: relative;
+  background: #07884b;
+  color: white;
+  padding: 35px 20px 30px;
+  text-align: center;
+}
+
+.faculty-header-content h1 {
+  margin: 0;
+  font-size: 42px;
+  color: white;
+}
+
+.faculty-header-content p {
+  margin: 8px 0 0;
+  font-size: 18px;
+  color: white;
+}
+
+/* BACK TO HOME BUTTON */
+
+.faculty-header .back-button {
+  position: absolute;
+  top: 20px;
+  left: 25px;
+
+  background: white;
+  color: #07884b;
+  border: 2px solid white;
+  border-radius: 8px;
+
+  padding: 10px 18px;
+  font-size: 15px;
+  font-weight: 600;
+
+  cursor: pointer;
+  transition: 0.3s ease;
+
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.faculty-header .back-button:hover {
+  background: #056b3a;
+  color: white;
+  border-color: white;
+  transform: translateX(-3px);
+}
+
+.faculty-header .back-button span {
+  font-size: 20px;
+}
+
+/* FORM BOX */
+
+.faculty-form-box {
+  width: 90%;
+  max-width: 650px;
+  margin: 30px auto;
+  padding: 35px;
+
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.12);
+}
+
+.faculty-form-box h2 {
+  text-align: center;
+  color: #07884b;
+  margin: 0 0 25px;
+}
+
+/* FORM LABELS */
+
+.faculty-form-box label {
+  display: block;
+  margin-top: 16px;
+  margin-bottom: 7px;
+  font-weight: 600;
+  color: #063b2a;
+}
+
+/* INPUTS */
+
+.faculty-form-box input,
+.faculty-form-box select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 13px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 16px;
+  background: white;
+}
+
+.faculty-form-box input:focus,
+.faculty-form-box select:focus {
+  outline: none;
+  border-color: #07884b;
+  box-shadow: 0 0 0 3px rgba(7, 136, 75, 0.12);
+}
+
+/* UID INPUT */
+
+.uid-input-group {
+  display: flex;
+  width: 100%;
+}
+
+.uid-prefix {
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  background: #e6f5ed;
+  color: #07884b;
+  border: 1px solid #cbd5e1;
+  border-right: none;
+  border-radius: 8px 0 0 8px;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.uid-input-group input {
+  border-radius: 0 8px 8px 0;
+}
+
+/* EMAIL HELP */
+
+.email-help {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: #07884b;
+}
+
+/* REGISTER BUTTON */
+
+.faculty-submit-button {
+  width: 100%;
+  margin-top: 25px;
+  padding: 14px;
+
+  background: #07884b;
+  color: white;
+
+  border: none;
+  border-radius: 8px;
+
+  font-size: 17px;
+  font-weight: bold;
+
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.faculty-submit-button:hover {
+  background: #056b3a;
+}
+
+/* ========================================
+   SMARTGATE HOME PAGE
+======================================== */
+
+.app {
+  min-height: 100vh;
+  width: 100%;
+  background: #f4f7fb;
+  display: flex;
+  flex-direction: column;
+}
+
+/* TOP HEADER */
+
+.top-header {
+  width: 100%;
+  background: #0b3970;
+  color: white;
+  padding: 18px 5%;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.college-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.logo {
+  width: 85px;
+  height: 85px;
+  object-fit: contain;
+}
+
+.college-info h2 {
+  margin: 2px 0;
+  font-size: 20px;
+  color: white;
+}
+
+.college-info p {
+  margin: 5px 0 0;
+  color: white;
+}
+
+.smartgate-title {
+  text-align: right;
+}
+
+.smartgate-title h1 {
+  font-size: 42px;
+  margin: 0;
+  color: white;
+}
+
+.smartgate-title h1 span,
+.welcome-box h2 span {
+  color: #f4b400;
+}
+
+.smartgate-title p {
+  margin: 5px 0;
+  font-size: 17px;
+  color: white;
+}
+
+/* MAIN CONTENT */
+
+.main-content {
+  flex: 1;
+  width: 100%;
+  padding: 45px 5%;
+  background: #f4f7fb;
+}
+
+/* WELCOME BOX */
+
+.welcome-box {
+  max-width: 850px;
+  margin: 0 auto 35px;
+  text-align: center;
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.welcome-box h2 {
+  font-size: 38px;
+  margin: 0 0 10px;
+  color: #0b3970;
+}
+
+.subtitle {
+  font-size: 20px;
+  color: #4b6380;
+  margin: 0;
+}
+
+.welcome-box hr {
+  width: 60%;
+  border: none;
+  border-top: 1px solid #ddd;
+  margin: 20px auto;
+}
+
+.tagline {
+  color: #345;
+  font-size: 18px;
+  margin-bottom: 0;
+}
+
+/* ROLE CARDS */
+
+.cards {
+  max-width: 1200px;
+  margin: auto;
+
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 22px;
+}
+
+.role-card {
+  padding: 25px 20px;
+  border-radius: 15px;
+  text-align: center;
+  min-height: 280px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.12);
+}
+
+.role-card .icon {
+  font-size: 48px;
+}
+
+.role-card h2 {
+  margin: 12px 0;
+}
+
+.role-card p {
+  flex: 1;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+.role-card button {
+  width: 100%;
+  border: none;
+  border-radius: 8px;
+  padding: 13px;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.role-card button:hover {
+  transform: translateY(-2px);
+  opacity: 0.9;
+}
+
+/* STUDENT CARD */
+
+.student {
+  background: #e5f3ff;
+}
+
+.student h2 {
+  color: #0755a0;
+}
+
+.student button {
+  background: #0755a0;
+}
+
+/* FACULTY CARD */
+
+.faculty {
+  background: #e5f8ed;
+}
+
+.faculty h2 {
+  color: #07884b;
+}
+
+.faculty button {
+  background: #07884b;
+}
+
+/* SECURITY CARD */
+
+.security {
+  background: #fff0e5;
+}
+
+.security h2 {
+  color: #c44a00;
+}
+
+.security button {
+  background: #c44a00;
+}
+
+/* ADMIN CARD */
+
+.admin {
+  background: #f0e9ff;
+}
+
+.admin h2 {
+  color: #59309b;
+}
+
+.admin button {
+  background: #59309b;
+}
+
+/* ========================================
+   FOOTER
+======================================== */
+
+footer {
+  width: 100%;
+  background: #0b3970;
+  color: white;
+  padding: 20px 5%;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 30px;
+}
+
+.footer-college {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.footer-college img {
+  width: 70px;
+  height: 70px;
+  object-fit: contain;
+}
+
+.footer-college h3,
+.footer-project h3 {
+  margin: 3px 0;
+  color: white;
+}
+
+.footer-college p,
+.footer-project p {
+  margin: 3px 0;
+  color: white;
+}
+
+.footer-project {
+  text-align: right;
+}
+
+/* ========================================
+   TABLET VIEW
+======================================== */
+
+@media (max-width: 900px) {
+
+  .top-header {
+    flex-direction: column;
+    text-align: center;
+    gap: 20px;
+  }
+
+  .college-info {
+    justify-content: center;
+  }
+
+  .smartgate-title {
+    text-align: center;
+  }
+
+  .cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  footer {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .footer-college {
+    flex-direction: column;
+  }
+
+  .footer-project {
+    text-align: center;
+  }
+}
+
+/* ========================================
+   MOBILE VIEW - ANDROID & iPHONE
+======================================== */
+
+@media (max-width: 600px) {
+
+  /* HOME HEADER */
+
+  .top-header {
+    padding: 20px 15px;
+  }
+
+  .college-info {
+    flex-direction: column;
+    text-align: center;
+    gap: 8px;
+  }
+
+  .logo {
+    width: 75px;
+    height: 75px;
+  }
+
+  .college-info h2 {
+    font-size: 18px;
+  }
+
+  .college-info p {
+    font-size: 15px;
+  }
+
+  .smartgate-title h1 {
+    font-size: 38px;
+  }
+
+  .smartgate-title p {
+    font-size: 15px;
+  }
+
+  /* MAIN */
+
+  .main-content {
+    padding: 25px 15px;
+  }
+
+  .welcome-box {
+    padding: 25px 15px;
+    margin-bottom: 25px;
+  }
+
+  .welcome-box h2 {
+    font-size: 29px;
+  }
+
+  .subtitle {
+    font-size: 17px;
+  }
+
+  .tagline {
+    font-size: 16px;
+  }
+
+  /* CARDS */
+
+  .cards {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .role-card {
+    min-height: auto;
+    padding: 25px 20px;
+  }
+
+  /* FACULTY PAGE */
+
+  .faculty-header {
+    padding-top: 80px;
+    padding-bottom: 25px;
+  }
+
+  .faculty-header .back-button {
+    top: 15px;
+    left: 15px;
+    padding: 8px 14px;
+    font-size: 14px;
+  }
+
+  .faculty-header-content h1 {
+    font-size: 30px;
+  }
+
+  .faculty-header-content p {
+    font-size: 14px;
+  }
+
+  .faculty-form-box {
+    width: calc(100% - 30px);
+    padding: 22px 18px;
+    margin: 20px auto;
+  }
+
+  .uid-prefix {
+    padding: 0 8px;
+    font-size: 12px;
+  }
+
+  .uid-input-group input {
+    min-width: 0;
+  }
+
+  /* FOOTER */
+
+  footer {
+    padding: 25px 15px;
+  }
+
+  .footer-college img {
+    width: 60px;
+    height: 60px;
+  }
+
+  .footer-college h3 {
+    font-size: 16px;
+  }
+}
+/* =================================
+   STUDENT REGISTRATION
+================================= */
+
+.student-registration-page {
+  min-height: 100vh;
+  background: #f4f7fb;
+}
+
+/* HEADER */
+.student-registration-header {
+  position: relative;
+  background: #0755a0;
+  color: white;
+  padding: 35px 20px 30px;
+  text-align: center;
+}
+
+.student-registration-header h1 {
+  margin: 0;
+  font-size: 42px;
+  color: white;
+}
+
+.student-registration-header p {
+  margin: 8px 0 0;
+  font-size: 17px;
+  color: white;
+}
+
+/* BACK BUTTON */
+.student-back-button {
+  position: absolute;
+  top: 20px;
+  left: 25px;
+
+  background: white;
+  color: #0755a0;
+
+  border: 2px solid white;
+  border-radius: 8px;
+
+  padding: 10px 18px;
+  font-size: 15px;
+  font-weight: 600;
+
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.student-back-button:hover {
+  background: #06437c;
+  color: white;
+  transform: translateX(-3px);
+}
+
+/* REGISTRATION BOX */
+.student-registration-box {
+  width: 90%;
+  max-width: 650px;
+  margin: 35px auto;
+  padding: 35px;
+
+  background: white;
+  border-radius: 16px;
+  box-sizing: border-box;
+
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.12);
+}
+
+.student-registration-box h2 {
+  text-align: center;
+  color: #0755a0;
+  margin-bottom: 15px;
+}
+
+.registration-info {
+  text-align: center;
+  color: #5b6b7c;
+  line-height: 1.6;
+  margin-bottom: 25px;
+}
+
+/* LABELS */
+.student-registration-box label {
+  display: block;
+  margin-top: 16px;
+  margin-bottom: 7px;
+  font-weight: 600;
+  color: #063b6f;
+}
+
+/* INPUTS */
+.student-registration-box input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 13px;
+
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+
+  font-size: 16px;
+}
+
+/* DISABLED INPUTS */
+.student-registration-box input:disabled {
+  background: #f1f5f9;
+  color: #334155;
+  cursor: not-allowed;
+}
+
+/* STUDENT UID */
+.student-registration-box .uid-input-group {
+  display: flex;
+  width: 100%;
+}
+
+.student-uid-prefix {
+  display: flex;
+  align-items: center;
+
+  padding: 0 12px;
+  background: #e5f3ff;
+  color: #0755a0;
+
+  border: 1px solid #cbd5e1;
+  border-right: none;
+  border-radius: 8px 0 0 8px;
+
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.student-registration-box .uid-input-group input {
+  border-radius: 0 8px 8px 0;
+}
+
+/* BUTTON */
+.student-register-button {
+  width: 100%;
+  margin-top: 25px;
+  padding: 14px;
+
+  background: #0755a0;
+  color: white;
+
+  border: none;
+  border-radius: 8px;
+
+  font-size: 17px;
+  font-weight: bold;
+
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.student-register-button:hover {
+  background: #06437c;
+}
+
+/* CANCEL BUTTON */
+.student-cancel-button {
+  width: 100%;
+  margin-top: 12px;
+  padding: 13px;
+
+  background: white;
+  color: #0755a0;
+
+  border: 1px solid #0755a0;
+  border-radius: 8px;
+
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* MESSAGES */
+.registration-error {
+  margin-top: 10px;
+  color: #c62828;
+  font-size: 14px;
+}
+
+.registration-success {
+  text-align: center;
+  color: #07884b;
+  font-weight: 500;
+  margin-bottom: 20px;
+}
+
+/* MOBILE */
+@media (max-width: 600px) {
+  .student-registration-header {
+    padding-top: 75px;
+  }
+
+  .student-registration-header h1 {
+    font-size: 30px;
+  }
+
+  .student-registration-header p {
+    font-size: 14px;
+  }
+
+  .student-back-button {
+    top: 15px;
+    left: 15px;
+    padding: 8px 14px;
+  }
+
+  .student-registration-box {
+    width: 92%;
+    padding: 22px;
+    margin: 20px auto;
+  }
+
+  .student-uid-prefix {
+    font-size: 12px;
+    padding: 0 8px;
+  }
+}
+/* =================================
+   STUDENT REGISTRATION
+================================= */
+
+.student-registration-page {
+  min-height: 100vh;
+  background: #f4f7fb;
+}
+
+/* HEADER */
+.student-registration-header {
+  position: relative;
+  background: #0755a0;
+  color: white;
+  padding: 35px 20px 30px;
+  text-align: center;
+}
+
+.student-registration-header h1 {
+  margin: 0;
+  font-size: 42px;
+  color: white;
+}
+
+.student-registration-header p {
+  margin: 8px 0 0;
+  font-size: 17px;
+  color: white;
+}
+
+/* BACK BUTTON */
+.student-back-button {
+  position: absolute;
+  top: 20px;
+  left: 25px;
+
+  background: white;
+  color: #0755a0;
+
+  border: 2px solid white;
+  border-radius: 8px;
+
+  padding: 10px 18px;
+  font-size: 15px;
+  font-weight: 600;
+
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.student-back-button:hover {
+  background: #06437c;
+  color: white;
+  transform: translateX(-3px);
+}
+
+/* REGISTRATION BOX */
+.student-registration-box {
+  width: 90%;
+  max-width: 650px;
+  margin: 35px auto;
+  padding: 35px;
+
+  background: white;
+  border-radius: 16px;
+  box-sizing: border-box;
+
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.12);
+}
+
+.student-registration-box h2 {
+  text-align: center;
+  color: #0755a0;
+  margin-bottom: 15px;
+}
+
+.registration-info {
+  text-align: center;
+  color: #5b6b7c;
+  line-height: 1.6;
+  margin-bottom: 25px;
+}
+
+/* LABELS */
+.student-registration-box label {
+  display: block;
+  margin-top: 16px;
+  margin-bottom: 7px;
+  font-weight: 600;
+  color: #063b6f;
+}
+
+/* INPUTS */
+.student-registration-box input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 13px;
+
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+
+  font-size: 16px;
+}
+
+/* DISABLED INPUTS */
+.student-registration-box input:disabled {
+  background: #f1f5f9;
+  color: #334155;
+  cursor: not-allowed;
+}
+
+/* STUDENT UID */
+.student-registration-box .uid-input-group {
+  display: flex;
+  width: 100%;
+}
+
+.student-uid-prefix {
+  display: flex;
+  align-items: center;
+
+  padding: 0 12px;
+  background: #e5f3ff;
+  color: #0755a0;
+
+  border: 1px solid #cbd5e1;
+  border-right: none;
+  border-radius: 8px 0 0 8px;
+
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.student-registration-box .uid-input-group input {
+  border-radius: 0 8px 8px 0;
+}
+
+/* BUTTON */
+.student-register-button {
+  width: 100%;
+  margin-top: 25px;
+  padding: 14px;
+
+  background: #0755a0;
+  color: white;
+
+  border: none;
+  border-radius: 8px;
+
+  font-size: 17px;
+  font-weight: bold;
+
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.student-register-button:hover {
+  background: #06437c;
+}
+
+/* CANCEL BUTTON */
+.student-cancel-button {
+  width: 100%;
+  margin-top: 12px;
+  padding: 13px;
+
+  background: white;
+  color: #0755a0;
+
+  border: 1px solid #0755a0;
+  border-radius: 8px;
+
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* MESSAGES */
+.registration-error {
+  margin-top: 10px;
+  color: #c62828;
+  font-size: 14px;
+}
+
+.registration-success {
+  text-align: center;
+  color: #07884b;
+  font-weight: 500;
+  margin-bottom: 20px;
+}
+
+/* MOBILE */
+@media (max-width: 600px) {
+  .student-registration-header {
+    padding-top: 75px;
+  }
+
+  .student-registration-header h1 {
+    font-size: 30px;
+  }
+
+  .student-registration-header p {
+    font-size: 14px;
+  }
+
+  .student-back-button {
+    top: 15px;
+    left: 15px;
+    padding: 8px 14px;
+  }
+
+  .student-registration-box {
+    width: 92%;
+    padding: 22px;
+    margin: 20px auto;
+  }
+
+  .student-uid-prefix {
+    font-size: 12px;
+    padding: 0 8px;
+  }
+}
+.admin-contact {
+  margin-top: 15px;
+  margin-bottom: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #59309b;
+}
+
+.admin-contact strong {
+  font-size: 14px;
+  font-weight: 700;
+}
+/* ========================================
+   SMARTGATE SECURITY VERIFICATION
+======================================== */
+
+.security-page {
+  min-height: 100vh;
+  background: #f4f7fb;
+}
+
+.security-header {
+  position: relative;
+  padding: 45px 20px;
+  background: #c44a00;
+  color: white;
+  text-align: center;
+}
+
+.security-header h1 {
+  margin: 0;
+  font-size: 38px;
+  color: white;
+}
+
+.security-header p {
+  margin: 10px 0 0;
+  color: white;
+  font-size: 17px;
+}
+
+.security-back-button {
+  position: absolute;
+  top: 20px;
+  left: 5%;
+
+  padding: 9px 16px;
+  background: transparent;
+  color: white;
+
+  border: 1px solid white;
+  border-radius: 8px;
+
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.security-back-button:hover {
+  background: white;
+  color: #c44a00;
+}
+
+/* MAIN CARD */
+.security-verification-box {
+  width: 90%;
+  max-width: 650px;
+  margin: 45px auto;
+  padding: 35px;
+
+  box-sizing: border-box;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.12);
+}
+
+.security-verification-box h2 {
+  margin-top: 0;
+  text-align: center;
+  color: #c44a00;
+}
+
+.security-info {
+  text-align: center;
+  color: #52677f;
+  line-height: 1.6;
+  margin-bottom: 25px;
+}
+
+.security-verification-box label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #333;
+}
+
+/* UID INPUT */
+.security-uid-group {
+  display: flex;
+  width: 100%;
+}
+
+.security-uid-group span {
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+
+  background: #fff0e5;
+  color: #c44a00;
+
+  border: 1px solid #cbd5e1;
+  border-right: none;
+  border-radius: 8px 0 0 8px;
+
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.security-uid-group input {
+  flex: 1;
+  min-width: 0;
+
+  padding: 13px;
+  border: 1px solid #cbd5e1;
+  border-radius: 0 8px 8px 0;
+
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+/* VERIFY BUTTON */
+.verify-pass-button,
+.new-verification-button {
+  width: 100%;
+  margin-top: 22px;
+  padding: 14px;
+
+  border: none;
+  border-radius: 8px;
+
+  background: #c44a00;
+  color: white;
+
+  font-size: 17px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.verify-pass-button:hover,
+.new-verification-button:hover {
+  background: #a63e00;
+}
+
+/* RESULT BOX */
+.security-result {
+  margin-top: 30px;
+  padding: 25px;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.security-result.approved {
+  background: #e7f8ed;
+  border: 2px solid #07884b;
+}
+
+.security-result.approved h2 {
+  color: #07884b;
+  font-size: 25px;
+}
+
+.security-result.not-approved,
+.security-result.error {
+  background: #fff0f0;
+  border: 2px solid #c62828;
+}
+
+.security-result.not-approved h2,
+.security-result.error h2 {
+  color: #c62828;
+  font-size: 24px;
+}
+
+.security-student-details {
+  margin-top: 20px;
+  padding: 15px;
+  background: white;
+  border-radius: 8px;
+  text-align: left;
+}
+
+.security-student-details p {
+  margin: 8px 0;
+}
+
+.new-verification-button {
+  background: #0b3970;
+}
+
+.new-verification-button:hover {
+  background: #082b55;
+}
+
+@media (max-width: 600px) {
+  .security-header {
+    padding: 80px 15px 30px;
+  }
+
+  .security-header h1 {
+    font-size: 28px;
+  }
+
+  .security-back-button {
+    top: 18px;
+    left: 15px;
+  }
+
+  .security-verification-box {
+    padding: 25px 20px;
+    margin: 25px auto;
+  }
+
+  .security-uid-group span {
+    font-size: 13px;
+    padding: 0 8px;
+  }
+}
+.cards {
+  max-width: 1400px;
+  margin: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 22px;
+}
+
+.approver {
+  background: #e9f7f5;
+}
+
+.approver h2 {
+  color: #087f5b;
+}
+
+.approver button {
+  background: #087f5b;
+}
+
+.secondary-role-button {
+  margin-top: 10px;
+  opacity: 0.9;
+}
+
+.role-note {
+  min-height: auto !important;
+  margin-top: 12px;
+  font-size: 12px;
+  color: #555;
+}
+/* =================================
+   AUTHORIZED APPROVER PAGE
+================================= */
+
+.approver-page {
+  min-height: 100vh;
+  background: #f4f7fb;
+}
+
+.approver-header {
+  position: relative;
+  background: #087f5b;
+  color: white;
+  padding: 35px 20px 30px;
+  text-align: center;
+}
+
+.approver-header h1 {
+  margin: 0;
+  color: white;
+  font-size: 38px;
+}
+
+.approver-header p {
+  margin: 8px 0 0;
+  color: white;
+}
+
+.approver-back-button {
+  position: absolute;
+  top: 20px;
+  left: 25px;
+  padding: 10px 18px;
+  border: 2px solid white;
+  border-radius: 8px;
+  background: white;
+  color: #087f5b;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.approver-login-box,
+.approver-dashboard {
+  width: 90%;
+  max-width: 950px;
+  margin: 30px auto;
+}
+
+.approver-login-box {
+  max-width: 550px;
+  background: white;
+  padding: 35px;
+  border-radius: 16px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.12);
+}
+
+.approver-login-box h2 {
+  text-align: center;
+  color: #087f5b;
+}
+
+.approver-login-box label {
+  display: block;
+  margin: 18px 0 7px;
+  font-weight: 600;
+}
+
+.approver-info {
+  text-align: center;
+  line-height: 1.5;
+  color: #555;
+}
+
+.approver-uid-prefix {
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  background: #e9f7f5;
+  color: #087f5b;
+  border: 1px solid #cbd5e1;
+  border-right: none;
+  border-radius: 8px 0 0 8px;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.approver-login-button {
+  width: 100%;
+  margin-top: 20px;
+  padding: 14px;
+  background: #087f5b;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.approver-error {
+  color: #c62828;
+  font-size: 14px;
+  margin-top: 10px;
+}
+
+.approver-welcome {
+  background: white;
+  padding: 20px 25px;
+  border-radius: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+}
+
+.approver-welcome h2 {
+  margin: 0;
+  color: #087f5b;
+}
+
+.approver-logout-button {
+  padding: 10px 18px;
+  background: #555;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.requests-box {
+  margin-top: 25px;
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+}
+
+.requests-box h2 {
+  margin-top: 0;
+  color: #087f5b;
+}
+
+.requests-table-container {
+  overflow-x: auto;
+}
+
+.requests-table-container table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.requests-table-container th,
+.requests-table-container td {
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+}
+
+.requests-table-container th {
+  background: #e9f7f5;
+  color: #087f5b;
+}
+
+.status {
+  padding: 5px 10px;
+  border-radius: 15px;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.status.pending {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.status.approved {
+  background: #d4edda;
+  color: #155724;
+}
+
+.status.rejected {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.approve-button,
+.reject-button {
+  padding: 8px 10px;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.approve-button {
+  background: #087f5b;
+}
+
+.reject-button {
+  background: #c62828;
+}
+
+.no-requests {
+  padding: 25px;
+  text-align: center;
+  background: #e9f7f5;
+  border-radius: 8px;
+}
+
+/* MOBILE VIEW */
+@media (max-width: 600px) {
+  .approver-header {
+    padding-top: 75px;
+  }
+
+  .approver-header h1 {
+    font-size: 28px;
+  }
+
+  .approver-back-button {
+    top: 15px;
+    left: 15px;
+  }
+
+  .approver-login-box {
+    width: 92%;
+    box-sizing: border-box;
+    padding: 22px;
+  }
+
+  .approver-welcome {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+  }
+}
