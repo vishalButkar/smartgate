@@ -21,10 +21,10 @@ function StudentRegistration({ goHome, goLogin }) {
     event.preventDefault();
     setMessage("");
 
-    // Validate 5 or 6 digit UID number
+    
     if (!/^\d{5,6}$/.test(uidNumber)) {
       setMessage(
-        "Please enter a valid 5 or 6 digit UID number."
+        "Please enter a valid ERP ID Number."
       );
       return;
     }
