@@ -195,17 +195,16 @@ function StudentRegistration({ goHome, goLogin }) {
                       setMessage("");
                     }
                   }}
-                  placeholder="5 or 6 digit number"
+                  placeholder="Enter ERP ID number"
                   pattern="[0-9]{5,6}"
-                  title="Enter a 5 or 6 digit numerical number"
+                  title="Enter ERP number"
                   maxLength="6"
                   required
                 />
               </div>
 
               <p className="uid-help">
-                Enter only the 5 or 6 digit numerical part of your
-                Student UID.
+                Enter only ERP Number
               </p>
 
               {message && (
