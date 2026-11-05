@@ -10,7 +10,7 @@ function StudentRegistration({ goHome, goLogin }) {
     setMessage("");
 
     if (!/^\d{2,6}$/.test(uidNumber)) {
-      setMessage("Please enter a valid 3 or 6 digit ERP ID number.");
+      setMessage("Please enter a valid ERP ID number.");
       return;
     }
 
@@ -108,7 +108,7 @@ function StudentRegistration({ goHome, goLogin }) {
             <h2>Verify Student Unique ID</h2>
 
             <p className="registration-info">
-              Enter your Student UID. Your details will be verified
+              Enter your Student ERP ID. Your details will be verified
               from the data uploaded by the Administrator.
             </p>
 
@@ -130,7 +130,7 @@ function StudentRegistration({ goHome, goLogin }) {
                       setUidNumber(value);
                     }
                   }}
-                  placeholder="3 or 6 ERP ID number"
+                  placeholder=" ERP ID number"
                   maxLength="6"
                   required
                 />
