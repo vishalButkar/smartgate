@@ -10,7 +10,7 @@ function StudentRegistration({ goHome, goLogin }) {
     setMessage("");
 
     if (!/^\d{2,6}$/.test(uidNumber)) {
-      setMessage("Please enter a valid 3 or 6 digit UID number.");
+      setMessage("Please enter a valid 3 or 6 digit ERP ID number.");
       return;
     }
 
@@ -31,7 +31,7 @@ function StudentRegistration({ goHome, goLogin }) {
     if (!foundStudent) {
       setStudent(null);
       setMessage(
-        "Student UID not found. Please contact the Administrator."
+        "Student ERP ID not found. Please contact the Administrator."
       );
       return;
     }
@@ -130,7 +130,7 @@ function StudentRegistration({ goHome, goLogin }) {
                       setUidNumber(value);
                     }
                   }}
-                  placeholder="3 or 6 digit number"
+                  placeholder="3 or 6 ERP ID number"
                   maxLength="6"
                   required
                 />
