@@ -10,11 +10,11 @@ function SecurityLogin({ goHome }) {
     setResult(null);
 
     // Validate UID number
-    if (!/^\d{5,6}$/.test(uidNumber)) {
+    if (!/^\d{2,6}$/.test(uidNumber)) {
       setResult({
         status: "error",
         title: "INVALID STUDENT UID",
-        message: "Please enter a valid 5 or 6 digit Student UID number.",
+        message: "Please enter a valid Student ERP ID number.",
       });
       return;
     }
@@ -116,7 +116,7 @@ function SecurityLogin({ goHome }) {
                   setUidNumber(value);
                 }
               }}
-              placeholder="5 or 6 digit number"
+              placeholder=" ERP ID number"
               maxLength="6"
               autoFocus
               required
