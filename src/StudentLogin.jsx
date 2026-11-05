@@ -9,8 +9,8 @@ function StudentRegistration({ goHome, goLogin }) {
     event.preventDefault();
     setMessage("");
 
-    if (!/^\d{5,6}$/.test(uidNumber)) {
-      setMessage("Please enter a valid 5 or 6 digit UID number.");
+    if (!/^\d{2,6}$/.test(uidNumber)) {
+      setMessage("Please enter a valid 3 or 6 digit UID number.");
       return;
     }
 
