@@ -130,7 +130,7 @@ function StudentRegistration({ goHome, goLogin }) {
                       setUidNumber(value);
                     }
                   }}
-                  placeholder="5 or 6 digit number"
+                  placeholder="3 or 6 digit number"
                   maxLength="6"
                   required
                 />
