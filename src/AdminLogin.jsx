@@ -1,120 +1,96 @@
-    border: "1px solid #cbd5e1",
-    borderRadius: "7px",
-    boxSizing: "border-box",
-    background: "#fff",
-  },
-  primaryButton: {
-    display: "inline-block",
-    marginTop: "20px",
-    padding: "12px 18px",
-    background: "#123e69",
-    color: "#fff",
-    border: "none",
-    borderRadius: "7px",
-    cursor: "pointer",
-    fontWeight: "bold",
-  },
-  secondaryButton: {
-    display: "inline-block",
-    marginTop: "20px",
-    padding: "12px 18px",
-    background: "#64748b",
-    color: "#fff",
-    border: "none",
-    borderRadius: "7px",
-    cursor: "pointer",
-    fontWeight: "bold",
-  },
-  logoutButton: {
-    background: "#b42318",
-    color: "#fff",
-    border: "none",
-    padding: "11px 18px",
-    borderRadius: "7px",
-    cursor: "pointer",
-  },
-  backButton: {
-    border: "none",
-    background: "transparent",
-    color: "#123e69",
-    cursor: "pointer",
-  },
-  homeButton: {
-    marginTop: "25px",
-    padding: "12px 18px",
-    background: "#334155",
-    color: "#fff",
-    border: "none",
-    borderRadius: "7px",
-    cursor: "pointer",
-  },
-  statsGrid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fit,minmax(170px,1fr))",
-    gap: "14px",
-    margin: "25px 0",
-  },
-  statCard: {
-    padding: "17px",
-    textAlign: "center",
-    background: "#edf5ff",
-    borderRadius: "9px",
-  },
-  tabs: {
-    display: "flex",
-    gap: "10px",
-    flexWrap: "wrap",
-    borderBottom: "1px solid #ddd",
-    paddingBottom: "12px",
-  },
-  tab: {
-    padding: "11px 17px",
-    border: "1px solid #cbd5e1",
-    background: "#fff",
-    borderRadius: "7px",
-    cursor: "pointer",
-  },
-  activeTab: {
-    padding: "11px 17px",
-    border: "none",
-    background: "#123e69",
-    color: "#fff",
-    borderRadius: "7px",
-    cursor: "pointer",
-  },
-  section: { padding: "20px 0" },
-  hint: { color: "#64748b", fontSize: "14px" },
-  success: {
-    background: "#e8f7ed",
-    color: "#176b35",
-    padding: "12px",
-    borderRadius: "7px",
-  },
-  error: {
-    background: "#fff0f0",
-    color: "#b42318",
-    padding: "12px",
-    borderRadius: "7px",
-  },
-  report: {
-    background: "#f1f5f9",
-    padding: "15px",
-    borderRadius: "8px",
-    marginTop: "20px",
-  },
-  table: {
-    width: "100%",
-    borderCollapse: "collapse",
-    textAlign: "left",
-  },
-  deactivateButton: {
-    background: "#b42318",
-    color: "#fff",
-    border: "none",
-    borderRadius: "5px",
-    padding: "7px 10px",
-    cursor: "pointer",
-  },
-};
 
-export default AdminLogin;
+import { useEffect, useState } from "react";
+import { supabase } from "./supabase";
+import Papa from "papaparse";
+
+function AdminLogin({ goHome }) {
+  const [admin, setAdmin] = useState(null);
+  const [tab, setTab] = useState("students");
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
+
+  const [stats, setStats] = useState({
+    students: 0,
+    requests: 0,
+    approvers: 0,
+  });
+
+  const [studentFile, setStudentFile] = useState(null);
+  const [uploadReport, setUploadReport] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const [academicYear, setAcademicYear] = useState("2026-27");
+    const [uploadHistory, setUploadHistory] = useState([]);
+    const [loadingHistory, setLoadingHistory] = useState(false);
+
+  const [faculty, setFaculty] = useState([]);
+  const [assignments, setAssignments] = useState([]);
+  const [selectedDepartment, setSelectedDepartment] = useState("");
+  const [selectedFaculty, setSelectedFaculty] = useState("");
+
+
+  const departments = [
+    ...new Set(faculty.map((item) => item.department).filter(Boolean)),
+  ].sort();
+
+  useEffect(() => {
+    checkAdminSession();
+  }, []);
+
+  const checkAdminSession = async () => {
+    try {
+      const { data, error } = await supabase.auth.getUser();
+      if (error) throw error;
+      if (!data.user) return;
+
+      const { data: profile, error: profileError } = await supabase
+        .from("profiles")
+        .select("id, full_name, email, role")
+        .eq("id", data.user.id)
+        .maybeSingle();
+
+      if (profileError) throw profileError;
+
+      if (profile?.role === "admin") {
+        setAdmin(profile);
+        await loadDashboard();
+      }
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const handleLogin = async (event) => {
+    event.preventDefault();
+    setLoading(true);
+    setError("");
+    setMessage("");
+
+    const form = new FormData(event.currentTarget);
+    const email = String(form.get("email") || "").trim().toLowerCase();
+    const password = form.get("password");
+
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) throw error;
+
+      const { data: profile, error: profileError } = await supabase
+        .from("profiles")
+        .select("id, full_name, email, role")
+        .eq("id", data.user.id)
+        .maybeSingle();
+
+      if (profileError) throw profileError;
+
+      if (!profile || profile.role !== "admin") {
+        await supabase.auth.signOut();
+        throw new Error("This account is not authorized as Administrator.");
+      }
+
+      setAdmin(profile);
+      await loadDashboard();
+    } catch (err) {
