@@ -19,6 +19,9 @@ function AdminLogin({ goHome }) {
   const [studentFile, setStudentFile] = useState(null);
   const [uploadReport, setUploadReport] = useState(null);
   const [uploading, setUploading] = useState(false);
+  const [academicYear, setAcademicYear] = useState("2026-27");
+const [uploadHistory, setUploadHistory] = useState([]);
+const [loadingHistory, setLoadingHistory] = useState(false);
 
   const [faculty, setFaculty] = useState([]);
   const [assignments, setAssignments] = useState([]);
