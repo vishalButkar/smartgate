@@ -36,15 +36,9 @@ function App() {
 
   return (
     <div className="app">
-
       <header className="top-header">
         <div className="college-info">
-          <img
-            src="/logo.png"
-            alt="GCOERC Logo"
-            className="logo"
-          />
-
+          <img src="/logo.png" alt="GCOERC Logo" className="logo" />
           <div>
             <h2>
               Guru Gobind Singh College of Engineering
@@ -55,43 +49,32 @@ function App() {
         </div>
 
         <div className="smartgate-title">
-          <h1>
-            Smart<span>Gate</span>
-          </h1>
+          <h1>Smart<span>Gate</span></h1>
           <p>Student Gate Pass Management System</p>
         </div>
       </header>
 
       <main className="main-content">
-
         <section className="welcome-box">
-          <h2>
-            Welcome to Smart<span>Gate</span>
-          </h2>
-
+          <h2>Welcome to Smart<span>Gate</span></h2>
           <p className="subtitle">
             Student Gate Pass Management System
           </p>
-
           <hr />
-
           <p className="tagline">
             Secure • Simple • Efficient
           </p>
         </section>
 
         <section className="cards">
-
           {/* STUDENT */}
           <div className="role-card student">
             <div className="icon">🎓</div>
             <h2>Student</h2>
-
             <p>
               Login, activate your account and apply
               for a SmartGate pass.
             </p>
-
             <button
               type="button"
               onClick={() => setPage("student-login")}
@@ -104,19 +87,16 @@ function App() {
           <div className="role-card approver">
             <div className="icon">✅</div>
             <h2>Gate Pass Approver</h2>
-
             <p>
               Pre-authorized staff can review and approve
               student gate pass requests.
             </p>
-
             <button
               type="button"
               onClick={() => setPage("approver-login")}
             >
               Approver Login
             </button>
-
             <p className="admin-contact">
               Login using official college email
               and password.
@@ -127,12 +107,10 @@ function App() {
           <div className="role-card security">
             <div className="icon">🛡️</div>
             <h2>Security</h2>
-
             <p>
               Verify approved gate passes before
               allowing student exit.
             </p>
-
             <button
               type="button"
               onClick={() => setPage("security-login")}
@@ -145,19 +123,16 @@ function App() {
           <div className="role-card admin">
             <div className="icon">🔐</div>
             <h2>Administrator</h2>
-
             <p>
               Manage student records, staff authorization
               and SmartGate administration.
             </p>
-
             <button
               type="button"
               onClick={() => setPage("admin-login")}
             >
               Administrator Login
             </button>
-
             <p className="admin-contact">
               Administrator:
               <br />
@@ -166,17 +141,12 @@ function App() {
               Head - AI & DS, GCOERC
             </p>
           </div>
-
         </section>
       </main>
 
       <footer>
         <div className="footer-college">
-          <img
-            src="/logo.png"
-            alt="GCOERC Logo"
-          />
-
+          <img src="/logo.png" alt="GCOERC Logo" />
           <div>
             <h3>
               Guru Gobind Singh College of Engineering
@@ -192,7 +162,6 @@ function App() {
           <p>Head - AI & DS, GCOERC</p>
         </div>
       </footer>
-
     </div>
   );
 }
