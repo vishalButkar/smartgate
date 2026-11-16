@@ -1,95 +1,160 @@
-import { useEffect, useMemo, useState } from "react";
-import { supabase } from "./supabase";
-import Papa from "papaparse";
-
-const ACADEMIC_YEARS = ["2023-24", "2024-25", "2025-26", "2026-27", "2027-28"];
-const REQUIRED_COLUMNS = ["uid", "name", "email", "mobile", "department", "year"];
-
-function AdminLogin({ goHome }) {
-  const [admin, setAdmin] = useState(null);
-  const [checkingSession, setCheckingSession] = useState(true);
-  const [tab, setTab] = useState("students");
-  const [loading, setLoading] = useState(false);
-  const [uploading, setUploading] = useState(false);
-  const [error, setError] = useState("");
-  const [message, setMessage] = useState("");
-  const [stats, setStats] = useState({ students: 0, requests: 0, approvers: 0 });
-  const [studentFile, setStudentFile] = useState(null);
-  const [academicYear, setAcademicYear] = useState("2026-27");
-  const [uploadReport, setUploadReport] = useState(null);
-  const [uploadHistory, setUploadHistory] = useState([]);
-  const [faculty, setFaculty] = useState([]);
-  const [assignments, setAssignments] = useState([]);
-  const [selectedDepartment, setSelectedDepartment] = useState("");
-  const [selectedFaculty, setSelectedFaculty] = useState("");
-
-  const departments = useMemo(
-    () => [...new Set(faculty.map((person) => person.department).filter(Boolean))].sort(),
-    [faculty]
-  );
-
-  useEffect(() => {
-    let active = true;
-    const restoreSession = async () => {
-      try {
-        const { data, error: authError } = await supabase.auth.getUser();
-        if (authError) throw authError;
-        if (!data.user) return;
-        const { data: profile, error: profileError } = await supabase
-          .from("profiles")
-          .select("id, full_name, email, role")
-          .eq("id", data.user.id)
-          .maybeSingle();
-        if (profileError) throw profileError;
-        if (profile?.role === "admin" && active) {
-          setAdmin(profile);
-          await loadDashboard();
-        } else if (profile && profile.role !== "admin") {
-          await supabase.auth.signOut();
-        }
-      } catch (err) {
-        if (active) setError(err.message || "Unable to verify administrator session.");
-      } finally {
-        if (active) setCheckingSession(false);
-      }
-    };
-    restoreSession();
-    return () => { active = false; };
-    // Initial session restoration only.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const loadDashboard = async () => {
-    const [studentsResult, requestsResult, approversResult] = await Promise.all([
-      supabase.from("student_master").select("uid", { count: "exact", head: true }),
-      supabase.from("gate_passes").select("id", { count: "exact", head: true }),
-      supabase.from("department_approvers").select("id", { count: "exact", head: true }).eq("is_active", true),
-    ]);
-    const firstError = studentsResult.error || requestsResult.error || approversResult.error;
-    if (firstError) throw firstError;
-    setStats({
-      students: studentsResult.count ?? 0,
-      requests: requestsResult.count ?? 0,
-      approvers: approversResult.count ?? 0,
-    });
-    await Promise.all([loadFaculty(), loadUploadHistory()]);
-  };
-
-  const loadFaculty = async () => {
-    const [facultyResult, assignmentResult] = await Promise.all([
-      supabase.from("profiles")
-        .select("id, uid, full_name, email, department, designation, role")
-        .in("role", ["faculty", "approver"])
-        .order("department")
-        .order("full_name"),
-      supabase.from("department_approvers")
         .select("id, user_id, department, is_active"),
     ]);
+
     if (facultyResult.error) throw facultyResult.error;
     if (assignmentResult.error) throw assignmentResult.error;
-    setFaculty(facultyResult.data || []);
+
+    const people = facultyResult.data || [];
+    setFaculty(people);
     setAssignments(assignmentResult.data || []);
-    if (!selectedDepartment && facultyResult.data?.length) {
-      setSelectedDepartment(facultyResult.data[0].department || "");
+
+    if (people.length) {
+      setSelectedDepartment((current) =>
+        current && people.some((person) => person.department === current)
+          ? current
+          : people[0].department || ""
+      );
+    } else {
+      setSelectedDepartment("");
     }
   };
+
+  const loadUploadHistory = async () => {
+    setLoadingHistory(true);
+    try {
+      const { data, error: historyError } = await supabase
+        .from("student_upload_history")
+        .select(
+          "id, file_name, academic_year, total_rows, inserted_rows, updated_rows, rejected_rows, uploaded_at"
+        )
+        .order("uploaded_at", { ascending: false })
+        .limit(20);
+
+      if (historyError) throw historyError;
+      setUploadHistory(data || []);
+    } catch (err) {
+      setError((current) =>
+        current ? `${current} | Upload history: ${err.message}` : err.message
+      );
+    } finally {
+      setLoadingHistory(false);
+    }
+  };
+
+  const normalizeHeader = (value) =>
+    String(value || "").trim().toLowerCase();
+
+  const normalizeUID = (value) => {
+    const uid = String(value ?? "").trim();
+    return /^\d{2,6}$/.test(uid) ? uid : null;
+  };
+
+  const saveUploadHistory = async (record) => {
+    const { error: historyError } = await supabase
+      .from("student_upload_history")
+      .insert({
+        file_name: record.fileName,
+        academic_year: academicYear,
+        total_rows: record.total,
+        inserted_rows: record.inserted,
+        updated_rows: record.updated,
+        rejected_rows: record.rejected,
+        uploaded_by: admin.id,
+      });
+
+    if (historyError) {
+      throw new Error(
+        `Student data was uploaded, but upload history could not be saved: ${historyError.message}`
+      );
+    }
+  };
+
+  const handleCSVUpload = () => {
+    if (!studentFile) {
+      setError("Please select a CSV file first.");
+      return;
+    }
+
+    setUploading(true);
+    setError("");
+    setMessage("");
+    setUploadReport(null);
+
+    Papa.parse(studentFile, {
+      header: true,
+      skipEmptyLines: "greedy",
+      transformHeader: normalizeHeader,
+      complete: async (results) => {
+        let inserted = 0;
+        let updated = 0;
+        let validRows = [];
+        const rejectedRows = [];
+        const seenUIDs = new Set();
+
+        try {
+          const headers = results.meta.fields || [];
+          const missing = REQUIRED_COLUMNS.filter(
+            (column) => !headers.includes(column)
+          );
+
+          if (missing.length) {
+            throw new Error(
+              `Missing CSV columns: ${missing.join(", ")}. Required columns are UID, Name, Email, Mobile, Department and Year.`
+            );
+          }
+
+          if (results.errors?.length) {
+            throw new Error(
+              `CSV parsing error: ${results.errors[0].message || "Please check the CSV file."}`
+            );
+          }
+
+          (results.data || []).forEach((row, index) => {
+            const uid = normalizeUID(row.uid);
+            const name = String(row.name || "").trim();
+            const email = String(row.email || "").trim().toLowerCase();
+            const mobile = String(row.mobile || "").replace(/\s+/g, "");
+            const department = String(row.department || "").trim();
+            const year = String(row.year || "").trim();
+
+            let reason = "";
+            if (!uid) reason = "ERP ID must contain only 2–6 digits";
+            else if (!name) reason = "Student name is missing";
+            else if (
+              !email ||
+              !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+            ) reason = "Invalid or missing email";
+            else if (!/^\d{10}$/.test(mobile))
+              reason = "Mobile number must contain 10 digits";
+            else if (!department) reason = "Department is missing";
+            else if (!year) reason = "Year is missing";
+            else if (seenUIDs.has(uid)) reason = "Duplicate ERP ID in this CSV";
+
+            if (reason) {
+              rejectedRows.push({ row: index + 2, reason });
+              return;
+            }
+
+            seenUIDs.add(uid);
+            validRows.push({ uid, name, email, mobile, department, year });
+          });
+
+          if (!validRows.length) {
+            setUploadReport({
+              total: results.data?.length || 0,
+              inserted: 0,
+              updated: 0,
+              rejected: rejectedRows.length,
+              rejectedRows,
+            });
+            throw new Error("No valid student records found in this CSV.");
+          }
+
+          // Read existing ERP IDs first so the report can distinguish inserts and updates.
+          const allUIDs = validRows.map((row) => row.uid);
+          const existingUIDs = new Set();
+
+          for (let i = 0; i < allUIDs.length; i += 500) {
+            const batchUIDs = allUIDs.slice(i, i + 500);
+            const { data: existing, error: existingError } = await supabase
+              .from("student_master")
