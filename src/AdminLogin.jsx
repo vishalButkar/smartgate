@@ -25,6 +25,14 @@ function AdminLogin({ goHome }) {
   const [selectedDepartment, setSelectedDepartment] = useState("");
   const [selectedFaculty, setSelectedFaculty] = useState("");
 
+  // Student activation states
+  const [studentDepartments, setStudentDepartments] = useState([]);
+  const [activationDepartment, setActivationDepartment] = useState("");
+  const [credentials, setCredentials] = useState([]);
+  const [skippedStudents, setSkippedStudents] = useState([]);
+  const [generating, setGenerating] = useState(false);
+  const [credentialsVisible, setCredentialsVisible] = useState(false);
+
   const departments = [
     ...new Set(faculty.map((item) => item.department).filter(Boolean)),
   ].sort();
@@ -36,9 +44,7 @@ function AdminLogin({ goHome }) {
   const checkAdminSession = async () => {
     try {
       const { data, error } = await supabase.auth.getUser();
-
       if (error) throw error;
-
       if (!data.user) return;
 
       const { data: profile, error: profileError } = await supabase
@@ -62,9 +68,10 @@ function AdminLogin({ goHome }) {
     event.preventDefault();
     setLoading(true);
     setError("");
+    setMessage("");
 
     const form = new FormData(event.currentTarget);
-    const email = form.get("email").trim();
+    const email = String(form.get("email") || "").trim().toLowerCase();
     const password = form.get("password");
 
     try {
@@ -119,7 +126,7 @@ function AdminLogin({ goHome }) {
       approvers: approvers.count ?? 0,
     });
 
-    await loadFaculty();
+    await Promise.all([loadFaculty(), loadStudentDepartments()]);
   };
 
   const loadFaculty = async () => {
@@ -150,7 +157,29 @@ function AdminLogin({ goHome }) {
     setAssignments(assignmentResult.data || []);
 
     if (!selectedDepartment && facultyResult.data?.length) {
-      setSelectedDepartment(facultyResult.data[0].department);
+      setSelectedDepartment(facultyResult.data[0].department || "");
+    }
+  };
+
+  const loadStudentDepartments = async () => {
+    const { data, error } = await supabase
+      .from("student_master")
+      .select("department")
+      .order("department");
+
+    if (error) {
+      setError(error.message);
+      return;
+    }
+
+    const uniqueDepartments = [
+      ...new Set((data || []).map((x) => x.department).filter(Boolean)),
+    ].sort();
+
+    setStudentDepartments(uniqueDepartments);
+
+    if (!activationDepartment && uniqueDepartments.length) {
+      setActivationDepartment(uniqueDepartments[0]);
     }
   };
 
@@ -159,15 +188,17 @@ function AdminLogin({ goHome }) {
   const normalizeHeader = (value) =>
     String(value || "").trim().toLowerCase();
 
+  // Keep numeric ERP IDs as numeric strings in student_master.
+  // Older prefixed IDs are converted to their numeric suffix.
   const normalizeUID = (value) => {
     const raw = String(value ?? "").trim();
 
-    if (/^STGGSF-Engin\d{2,6}$/i.test(raw)) {
-      return "STGGSF-Engin" + raw.replace(/^STGGSF-Engin/i, "");
+    if (/^STGGSF-Engin[0-9]{2,6}$/i.test(raw)) {
+      return raw.replace(/^STGGSF-Engin/i, "");
     }
 
-    if (/^\d{2,6}$/.test(raw)) {
-      return "STGGSF-Engin" + raw;
+    if (/^[0-9]{2,6}$/.test(raw)) {
+      return raw;
     }
 
     return null;
@@ -205,8 +236,9 @@ function AdminLogin({ goHome }) {
 
           if (missing.length) {
             throw new Error(
-              "Missing CSV columns: " + missing.join(", ") +
-              ". Please use the six required column headings."
+              "Missing CSV columns: " +
+                missing.join(", ") +
+                ". Please use the six required column headings."
             );
           }
 
@@ -227,7 +259,7 @@ function AdminLogin({ goHome }) {
               !name ||
               !email ||
               !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ||
-              !/^\d{10}$/.test(mobile) ||
+              !/^[0-9]{10}$/.test(mobile) ||
               !department ||
               !year
             ) {
@@ -241,7 +273,7 @@ function AdminLogin({ goHome }) {
             if (seenUIDs.has(uid)) {
               rejectedRows.push({
                 row: index + 2,
-                reason: "Duplicate UID in CSV",
+                reason: "Duplicate ERP ID in CSV",
               });
               return;
             }
@@ -262,7 +294,6 @@ function AdminLogin({ goHome }) {
             throw new Error("No valid student records found in this CSV.");
           }
 
-          // Upload in batches of 100 records
           let uploaded = 0;
 
           for (let i = 0; i < validRows.length; i += 100) {
@@ -306,6 +337,91 @@ function AdminLogin({ goHome }) {
         setUploading(false);
       },
     });
+  };
+
+  // DEPARTMENT-WISE TEMPORARY PASSWORD GENERATION
+
+  const generateTemporaryPasswords = async () => {
+    if (!activationDepartment) {
+      setError("Please select a student department.");
+      return;
+    }
+
+    const confirmed = window.confirm(
+      `Generate temporary passwords for students in ${activationDepartment}?\n\nAlready activated students will be skipped. Existing unused passwords for eligible students will be replaced.`
+    );
+
+    if (!confirmed) return;
+
+    setGenerating(true);
+    setError("");
+    setMessage("");
+    setCredentials([]);
+    setSkippedStudents([]);
+    setCredentialsVisible(false);
+
+    try {
+      const { data, error } = await supabase.functions.invoke(
+        "admin-generate-temp-passwords",
+        {
+          body: {
+            department: activationDepartment,
+          },
+        }
+      );
+
+      if (error) {
+        let messageText = error.message;
+
+        try {
+          const details = await error.context?.json();
+          if (details?.error) messageText = details.error;
+        } catch (_) {
+          // Keep original error message.
+        }
+
+        throw new Error(messageText || "Password generation failed.");
+      }
+
+      if (!data?.success) {
+        throw new Error(data?.error || "Password generation failed.");
+      }
+
+      setCredentials(data.credentials || []);
+      setSkippedStudents(data.skipped || []);
+      setCredentialsVisible(true);
+
+      setMessage(
+        `${data.generated_count || 0} temporary passwords generated for ${activationDepartment}.`
+      );
+    } catch (err) {
+      console.error("Temporary password generation:", err);
+      setError(err.message || "Unable to generate temporary passwords.");
+    } finally {
+      setGenerating(false);
+    }
+  };
+
+  const printCredentials = () => {
+    if (!credentials.length) {
+      setError("There are no credentials available to print.");
+      return;
+    }
+
+    window.print();
+  };
+
+  const clearCredentials = () => {
+    const confirmed = window.confirm(
+      "Clear the displayed temporary passwords? Make sure you have printed or securely saved the slips first."
+    );
+
+    if (!confirmed) return;
+
+    setCredentials([]);
+    setCredentialsVisible(false);
+    setSkippedStudents([]);
+    setMessage("Displayed temporary passwords cleared.");
   };
 
   // APPROVER MANAGEMENT
@@ -434,8 +550,43 @@ function AdminLogin({ goHome }) {
 
   return (
     <div style={styles.page}>
+      <style>{`
+        @media print {
+          body * {
+            visibility: hidden !important;
+          }
+          #smartgate-print-area,
+          #smartgate-print-area * {
+            visibility: visible !important;
+          }
+          #smartgate-print-area {
+            position: absolute !important;
+            left: 0 !important;
+            top: 0 !important;
+            width: 100% !important;
+            padding: 10mm !important;
+            background: white !important;
+          }
+          .credential-slip {
+            break-inside: avoid;
+            page-break-inside: avoid;
+            border: 1px dashed #333 !important;
+            margin: 8px !important;
+            padding: 16px !important;
+            width: 44% !important;
+            display: inline-block !important;
+            vertical-align: top !important;
+            color: #000 !important;
+            background: #fff !important;
+          }
+          .no-print {
+            display: none !important;
+          }
+        }
+      `}</style>
+
       <div style={styles.dashboard}>
-        <header style={styles.header}>
+        <header style={styles.header} className="no-print">
           <div>
             <h1 style={styles.heading}>SmartGate Administration</h1>
             <p style={styles.subheading}>
@@ -449,33 +600,54 @@ function AdminLogin({ goHome }) {
           </button>
         </header>
 
-        {error && <p style={styles.error}>{error}</p>}
-        {message && <p style={styles.success}>{message}</p>}
+        <div className="no-print">
+          {error && <p style={styles.error}>{error}</p>}
+          {message && <p style={styles.success}>{message}</p>}
 
-        <div style={styles.statsGrid}>
-          <Stat title="Total Students" value={stats.students} />
-          <Stat title="Gate Pass Requests" value={stats.requests} />
-          <Stat title="Active Approvers" value={stats.approvers} />
+          <div style={styles.statsGrid}>
+            <Stat title="Total Students" value={stats.students} />
+            <Stat title="Gate Pass Requests" value={stats.requests} />
+            <Stat title="Active Approvers" value={stats.approvers} />
+          </div>
+
+          <nav style={styles.tabs}>
+            <button
+              style={tab === "students" ? styles.activeTab : styles.tab}
+              onClick={() => {
+                setTab("students");
+                setError("");
+                setMessage("");
+              }}
+            >
+              Student CSV Upload
+            </button>
+
+            <button
+              style={tab === "activation" ? styles.activeTab : styles.tab}
+              onClick={() => {
+                setTab("activation");
+                setError("");
+                setMessage("");
+              }}
+            >
+              Student Activation Passwords
+            </button>
+
+            <button
+              style={tab === "approvers" ? styles.activeTab : styles.tab}
+              onClick={() => {
+                setTab("approvers");
+                setError("");
+                setMessage("");
+              }}
+            >
+              Approver Management
+            </button>
+          </nav>
         </div>
 
-        <nav style={styles.tabs}>
-          <button
-            style={tab === "students" ? styles.activeTab : styles.tab}
-            onClick={() => setTab("students")}
-          >
-            Student CSV Upload
-          </button>
-
-          <button
-            style={tab === "approvers" ? styles.activeTab : styles.tab}
-            onClick={() => setTab("approvers")}
-          >
-            Approver Management
-          </button>
-        </nav>
-
         {tab === "students" && (
-          <section style={styles.section}>
+          <section style={styles.section} className="no-print">
             <h2>Student Master Data Upload</h2>
 
             <p>
@@ -484,8 +656,9 @@ function AdminLogin({ goHome }) {
             </p>
 
             <p style={styles.hint}>
-              UID can be numeric (2–6 digits) or already prefixed
-              with STGGSF-Engin.
+              Numeric ERP IDs containing 2–6 digits are stored without
+              prefixes. Older STGGSF-Engin-prefixed IDs are also converted
+              to their numeric suffix.
             </p>
 
             <input
@@ -533,8 +706,128 @@ function AdminLogin({ goHome }) {
           </section>
         )}
 
+        {tab === "activation" && (
+          <section style={styles.section} className="no-print">
+            <h2>Department-wise Student Activation</h2>
+
+            <p>
+              Generate individual temporary passwords for students who
+              have not activated their SmartGate accounts.
+            </p>
+
+            <div style={styles.warning}>
+              <strong>Confidential credentials</strong>
+              <p>
+                Temporary passwords are displayed only once after
+                generation. Print the individual slips and distribute
+                them privately through the respective department.
+              </p>
+              <p>
+                Each temporary password expires after seven days and
+                can be used only once.
+              </p>
+            </div>
+
+            <label style={styles.label}>Select Student Department</label>
+
+            <select
+              style={styles.input}
+              value={activationDepartment}
+              onChange={(event) => {
+                setActivationDepartment(event.target.value);
+                setCredentials([]);
+                setSkippedStudents([]);
+                setCredentialsVisible(false);
+                setError("");
+                setMessage("");
+              }}
+            >
+              <option value="">Choose department</option>
+              {studentDepartments.map((department) => (
+                <option key={department} value={department}>
+                  {department}
+                </option>
+              ))}
+            </select>
+
+            <button
+              style={styles.primaryButton}
+              onClick={generateTemporaryPasswords}
+              disabled={generating || !activationDepartment}
+            >
+              {generating
+                ? "Generating Passwords..."
+                : "Generate Department-wise Temporary Passwords"}
+            </button>
+
+            {credentialsVisible && (
+              <div style={styles.report}>
+                <h3>Generation Report</h3>
+                <p>
+                  Department: <strong>{activationDepartment}</strong>
+                </p>
+                <p>
+                  New temporary passwords:{" "}
+                  <strong>{credentials.length}</strong>
+                </p>
+                <p>
+                  Students skipped:{" "}
+                  <strong>{skippedStudents.length}</strong>
+                </p>
+
+                {credentials.length > 0 && (
+                  <>
+                    <div style={styles.buttonRow}>
+                      <button
+                        style={styles.primaryButton}
+                        onClick={printCredentials}
+                      >
+                        🖨 Print Individual Student Slips
+                      </button>
+
+                      <button
+                        style={styles.secondaryButton}
+                        onClick={clearCredentials}
+                      >
+                        Clear Displayed Passwords
+                      </button>
+                    </div>
+
+                    <p style={styles.hint}>
+                      Print these slips before clearing this page.
+                      Passwords cannot be retrieved from the database
+                      after they disappear from this screen.
+                    </p>
+                  </>
+                )}
+
+                {credentials.length === 0 && (
+                  <p>
+                    No new passwords were generated. Check the skipped
+                    student list below.
+                  </p>
+                )}
+
+                {skippedStudents.length > 0 && (
+                  <details style={{ marginTop: 18 }}>
+                    <summary>
+                      View skipped students ({skippedStudents.length})
+                    </summary>
+
+                    {skippedStudents.map((student) => (
+                      <p key={student.uid}>
+                        {student.uid} – {student.name}: {student.reason}
+                      </p>
+                    ))}
+                  </details>
+                )}
+              </div>
+            )}
+          </section>
+        )}
+
         {tab === "approvers" && (
-          <section style={styles.section}>
+          <section style={styles.section} className="no-print">
             <h2>Department-wise Approver Management</h2>
 
             {faculty.length === 0 ? (
@@ -545,6 +838,7 @@ function AdminLogin({ goHome }) {
             ) : (
               <>
                 <label style={styles.label}>Select Department</label>
+
                 <select
                   style={styles.input}
                   value={selectedDepartment}
@@ -561,10 +855,13 @@ function AdminLogin({ goHome }) {
                 </select>
 
                 <label style={styles.label}>Select Faculty Member</label>
+
                 <select
                   style={styles.input}
                   value={selectedFaculty}
-                  onChange={(event) => setSelectedFaculty(event.target.value)}
+                  onChange={(event) =>
+                    setSelectedFaculty(event.target.value)
+                  }
                 >
                   <option value="">Choose faculty</option>
                   {faculty
@@ -602,6 +899,7 @@ function AdminLogin({ goHome }) {
                         <th>Action</th>
                       </tr>
                     </thead>
+
                     <tbody>
                       {faculty
                         .filter(
@@ -637,7 +935,73 @@ function AdminLogin({ goHome }) {
           </section>
         )}
 
-        <button style={styles.homeButton} onClick={goHome}>
+        <div id="smartgate-print-area">
+          {credentialsVisible && credentials.length > 0 && (
+            <>
+              <div style={styles.printHeading}>
+                <h2>GURU GOBIND SINGH FOUNDATION</h2>
+                <h3>SmartGate – Student Account Activation</h3>
+                <p>Department: {activationDepartment}</p>
+                <p>
+                  Confidential individual student login credentials
+                </p>
+              </div>
+
+              <div style={styles.slipGrid}>
+                {credentials.map((student) => (
+                  <div className="credential-slip" key={student.uid}>
+                    <h3>SMARTGATE – GCOERC</h3>
+                    <p>
+                      <strong>Student Name:</strong> {student.name}
+                    </p>
+                    <p>
+                      <strong>ERP ID:</strong> {student.uid}
+                    </p>
+                    <p>
+                      <strong>Department:</strong> {student.department}
+                    </p>
+                    <p>
+                      <strong>Year:</strong> {student.year}
+                    </p>
+                    <p>
+                      <strong>Registered Email:</strong> {student.email}
+                    </p>
+
+                    <div style={styles.passwordBox}>
+                      <strong>Temporary Password</strong>
+                      <div style={styles.passwordText}>
+                        {student.temporary_password}
+                      </div>
+                    </div>
+
+                    <p style={styles.slipInstruction}>
+                      Visit the SmartGate portal. Select First-Time
+                      Activation, enter your ERP ID, registered email
+                      and temporary password, then create your own
+                      permanent password.
+                    </p>
+
+                    <p style={styles.slipExpiry}>
+                      Temporary password expires:{" "}
+                      {new Date(student.expires_at).toLocaleString("en-IN")}
+                    </p>
+
+                    <p style={styles.slipFooter}>
+                      Keep this slip confidential. Do not share your
+                      password with anyone.
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+
+        <button
+          className="no-print"
+          style={styles.homeButton}
+          onClick={goHome}
+        >
           Back to SmartGate Home
         </button>
       </div>
@@ -705,10 +1069,21 @@ const styles = {
     background: "#fff",
   },
   primaryButton: {
-    display: "block",
+    display: "inline-block",
     marginTop: "20px",
     padding: "12px 18px",
     background: "#123e69",
+    color: "#fff",
+    border: "none",
+    borderRadius: "7px",
+    cursor: "pointer",
+    fontWeight: "bold",
+  },
+  secondaryButton: {
+    display: "inline-block",
+    marginTop: "20px",
+    padding: "12px 18px",
+    background: "#64748b",
     color: "#fff",
     border: "none",
     borderRadius: "7px",
@@ -772,13 +1147,8 @@ const styles = {
     borderRadius: "7px",
     cursor: "pointer",
   },
-  section: {
-    padding: "20px 0",
-  },
-  hint: {
-    color: "#64748b",
-    fontSize: "14px",
-  },
+  section: { padding: "20px 0" },
+  hint: { color: "#64748b", fontSize: "14px" },
   success: {
     background: "#e8f7ed",
     color: "#176b35",
@@ -791,11 +1161,24 @@ const styles = {
     padding: "12px",
     borderRadius: "7px",
   },
+  warning: {
+    background: "#fff7e6",
+    color: "#805500",
+    padding: "15px",
+    borderRadius: "8px",
+    marginTop: "15px",
+  },
   report: {
     background: "#f1f5f9",
     padding: "15px",
     borderRadius: "8px",
     marginTop: "20px",
+  },
+  buttonRow: {
+    display: "flex",
+    gap: "12px",
+    flexWrap: "wrap",
+    alignItems: "center",
   },
   table: {
     width: "100%",
@@ -809,6 +1192,43 @@ const styles = {
     borderRadius: "5px",
     padding: "7px 10px",
     cursor: "pointer",
+  },
+  printHeading: {
+    textAlign: "center",
+    marginBottom: "20px",
+    color: "#000",
+  },
+  slipGrid: {
+    display: "flex",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    gap: "10px",
+  },
+  passwordBox: {
+    border: "1px solid #222",
+    padding: "10px",
+    margin: "12px 0",
+    textAlign: "center",
+  },
+  passwordText: {
+    fontSize: "19px",
+    fontWeight: "bold",
+    letterSpacing: "1px",
+    marginTop: "8px",
+    overflowWrap: "anywhere",
+  },
+  slipInstruction: {
+    fontSize: "12px",
+    lineHeight: 1.5,
+  },
+  slipExpiry: {
+    fontSize: "11px",
+  },
+  slipFooter: {
+    fontSize: "11px",
+    fontWeight: "bold",
+    borderTop: "1px dashed #777",
+    paddingTop: "8px",
   },
 };
 
