@@ -1707,3 +1707,72 @@ footer {
     padding: 16px;
   }
 }
+
+
+/* =====================================================
+   SMARTGATE HOME PAGE - COMPACT RESPONSIVE LAYOUT
+   Navy blue + white with subtle gold accent
+===================================================== */
+.app { background: #f1f5f9; }
+.top-header { background: #123f70; padding: 12px 4%; gap: 14px; }
+.college-info { min-width: 0; }
+.college-info img, .college-info .logo { width: 62px; height: 62px; object-fit: contain; }
+.college-info h2 { font-size: 17px; line-height: 1.25; }
+.college-info p { font-size: 13px; }
+.smartgate-title h1 { font-size: 34px; }
+.smartgate-title p { font-size: 14px; }
+.main-content { padding: 22px 4%; }
+.welcome-box { max-width: 850px; margin: 0 auto 20px; padding: 20px 22px; }
+.welcome-box h2 { font-size: 32px; }
+.subtitle { font-size: 17px; }
+.welcome-box hr { margin: 12px auto; }
+.tagline { font-size: 15px; }
+.cards { max-width: 1200px; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.role-card { min-width: 0; min-height: 220px; padding: 18px 16px; }
+.role-card .role-icon { font-size: 34px; }
+.role-card h2 { font-size: 20px; margin: 8px 0; }
+.role-card p { font-size: 14px; line-height: 1.35; margin: 0 0 12px; }
+.role-card button { padding: 11px 10px; font-size: 14px; }
+.footer-project { display: flex; align-items: center; justify-content: space-around; gap: 12px; flex-wrap: wrap; text-align: center; margin: 0 auto; max-width: 1200px; padding: 12px 18px; background: #123f70; border-radius: 0 0 10px 10px; }
+.footer-project p { color: #fff; margin: 3px 0; font-size: 14px; }
+.footer-project h3 { margin: 3px 0; }
+.footer-project .creator-link,
+.footer-project .creator-link:visited { color: #fff; text-decoration: underline; text-decoration-color: rgba(255,255,255,.75); font-weight: 700; }
+.footer-project .creator-link:hover { color: #f4b400; }
+
+@media (max-width: 700px) {
+  .top-header { padding: 9px 12px; flex-direction: row; justify-content: center; gap: 10px; }
+  .college-info { flex: 1; gap: 8px; justify-content: flex-start; text-align: left; }
+  .college-info img, .college-info .logo { width: 44px; height: 44px; }
+  .college-info h2 { font-size: 12px; line-height: 1.2; }
+  .college-info p { font-size: 11px; margin-top: 2px; }
+  .smartgate-title { text-align: right; flex: 0 0 auto; }
+  .smartgate-title h1 { font-size: 25px; }
+  .smartgate-title p { font-size: 10px; line-height: 1.2; max-width: 125px; }
+  .main-content { padding: 12px 12px 16px; }
+  .welcome-box { margin-bottom: 12px; padding: 12px 10px; border-radius: 10px; }
+  .welcome-box h2 { font-size: clamp(22px, 6vw, 28px); margin-bottom: 4px; }
+  .subtitle { font-size: 13px; }
+  .welcome-box hr { width: 55%; margin: 8px auto; }
+  .tagline { font-size: 12px; margin-top: 0; }
+  .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .role-card { min-height: 0; padding: 12px 9px; border-radius: 10px; }
+  .role-card .role-icon { font-size: 27px; }
+  .role-card h2 { font-size: 15px; line-height: 1.15; margin: 5px 0; }
+  .role-card p { font-size: 11px; line-height: 1.25; margin: 0 0 9px; }
+  .role-card button { padding: 9px 5px; font-size: 11px; line-height: 1.2; }
+  .role-card:nth-child(3) { grid-column: 1 / -1; }
+  .role-card:nth-child(3) p { max-width: 320px; }
+  .footer-project { gap: 5px 14px; padding: 9px 8px; margin-top: 12px; border-radius: 8px; }
+  .footer-project p { font-size: 11px; }
+  .footer-project h3 { font-size: 14px; }
+}
+
+@media (max-width: 360px) {
+  .top-header { flex-wrap: wrap; }
+  .college-info { flex: 1 1 100%; justify-content: center; text-align: center; }
+  .smartgate-title { flex: 1 1 100%; text-align: center; }
+  .smartgate-title p { max-width: none; }
+  .role-card h2 { font-size: 14px; }
+  .role-card p { font-size: 10px; }
+}

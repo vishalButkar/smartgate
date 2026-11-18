@@ -175,6 +175,7 @@ export default function App() {
           <p>Project made by</p>
           <h3>
             <a
+              className="creator-link"
               href="https://vishalbutkar.github.io/home/card"
               target="_blank"
               rel="noopener noreferrer"
