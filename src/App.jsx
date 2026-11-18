@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { supabase, supabaseReady } from "./supabase";
-import AdminLogin from "./AdminLogin";
 
 export default function App() {
   const [page, setPage] = useState("home");
@@ -25,7 +24,7 @@ export default function App() {
     });
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session) loadProfile();
-      else { setProfile(null); if (["admin","approver","security"].includes(page)) setPage("home"); }
+      else { setProfile(null); if (["approver","security"].includes(page)) setPage("home"); }
     });
     return () => subscription.unsubscribe();
   }, []);
@@ -43,7 +42,7 @@ export default function App() {
         .select("id,uid,full_name,email,department,role")
         .eq("id", user.id).maybeSingle();
       if (profileError) throw profileError;
-      if (!data || !["admin","approver","security"].includes(data.role)) {
+      if (!data || !["approver","security"].includes(data.role)) {
         await supabase.auth.signOut();
         throw new Error("This account is not authorized for SmartGate.");
       }
@@ -67,7 +66,7 @@ export default function App() {
       if (pError) throw pError;
       if (!data || data.role !== role) {
         await supabase.auth.signOut();
-        throw new Error(`This account is not authorized as ${role}. Ask the Administrator to verify your faculty record and approver access.`);
+        throw new Error(`This account is not authorized as ${role}. Please contact the college SmartGate coordinator.`);
       }
       setProfile(data); setPage(role);
     } catch (e) { setError(e.message); }
@@ -87,7 +86,7 @@ export default function App() {
       const { data, error: rpcError } = await supabase.rpc("smartgate_student_lookup", { p_uid: id });
       if (rpcError) throw rpcError;
       const record = Array.isArray(data) ? data[0] : data;
-      if (!record) throw new Error("ERP ID not found. Please contact the Administrator.");
+      if (!record) throw new Error("ERP ID not found. Please contact the college office.");
       setStudent(record);
     } catch (e) { setError(e.message); }
     finally { setBusy(false); }
@@ -171,7 +170,6 @@ export default function App() {
           <RoleCard icon="🎓" title="Student" desc="Apply for a gate pass using your numeric ERP ID." onClick={()=>{clear();setPage("student");}}>Apply for Gate Pass</RoleCard>
           <RoleCard icon="✅" title="Gate Pass Approver" desc="Department-authorized staff can approve or reject requests." onClick={()=>{clear();setPage("approver-login");}}>Approver Login</RoleCard>
           <RoleCard icon="🛡️" title="Security" desc="Enter a student ERP ID to check the latest gate-pass status. No login required." onClick={()=>{clear();setErp("");setVerified([]);setPage("security");}}>Check Gate Pass Status</RoleCard>
-          <RoleCard icon="🔐" title="Administrator" desc="Manage student records and department approvers." onClick={()=>{clear();setPage("admin-login");}}>Administrator Login</RoleCard>
         </section>
       </>}
       {page === "student" && <section className="portal">
@@ -181,8 +179,7 @@ export default function App() {
           <form onSubmit={submitPass}><label>Reason for leaving campus</label><textarea value={reason} onChange={e=>setReason(e.target.value)} required/><label>Destination (optional)</label><input value={destination} onChange={e=>setDestination(e.target.value)}/><button disabled={busy}>{busy?"Submitting...":"Submit Gate Pass"}</button></form><button className="secondary-role-button" onClick={()=>setStudent(null)}>Change ERP ID</button></>}
         <p className="small-note">No student password or OTP is required. ERP ID alone does not prove identity; use an institutional identity check if stronger verification is required.</p>
       </section>}
-      {["admin-login","approver-login"].includes(page) && <section className="portal"><Back onClick={goHome}/><h2>{page==="admin-login"?"Administrator Login":"Approver Login"}</h2><form onSubmit={e=>signIn(e,page==="admin-login"?"admin":"approver")}><label>Official college email</label><input type="email" name="email" required/><label>Password</label><input type="password" name="password" required/><button disabled={busy}>{busy?"Signing in...":"Sign in"}</button></form></section>}
-      {page === "admin" && profile?.role === "admin" && <AdminLogin goHome={goHome}/>}
+      {page === "approver-login" && <section className="portal"><Back onClick={goHome}/><h2>Approver Login</h2><form onSubmit={e=>signIn(e,"approver")}><label>Official college email</label><input type="email" name="email" required/><label>Password</label><input type="password" name="password" required/><button disabled={busy}>{busy?"Signing in...":"Sign in"}</button></form></section>}
       {page === "approver" && profile?.role === "approver" && (
         <section className="portal">
           <div className="portal-head">
@@ -283,7 +280,7 @@ export default function App() {
                   {status === "approved" && "Approved. Verify the student's details before allowing exit."}
                   {status === "pending" && "Approval is pending. Do not allow the student to exit."}
                   {status === "rejected" && "Request rejected. Do not allow the student to exit."}
-                  {!["approved", "pending", "rejected"].includes(status) && "Status could not be recognized. Contact the Administrator."}
+                  {!["approved", "pending", "rejected"].includes(status) && "Status could not be recognized. Contact the college office."}
                 </p>
                 {p.created_at && (
                   <small>Request date: {new Date(p.created_at).toLocaleString()}</small>
