@@ -171,6 +171,20 @@ export default function App() {
           <RoleCard icon="✅" title="Gate Pass Approver" desc="Department-authorized staff can approve or reject requests." onClick={()=>{clear();setPage("approver-login");}}>Approver Login</RoleCard>
           <RoleCard icon="🛡️" title="Security" desc="Enter a student ERP ID to check the latest gate-pass status. No login required." onClick={()=>{clear();setErp("");setVerified([]);setPage("security");}}>Check Gate Pass Status</RoleCard>
         </section>
+        <footer className="footer-project">
+          <p>Project made by</p>
+          <h3>
+            <a
+              href="https://vishalbutkar.github.io/home/card"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Visit Dr. Umakant Butkar's personal webpage"
+            >
+              Dr. Umakant Butkar
+            </a>
+          </h3>
+          <p>Head - AI &amp; DS, GCOERC, Nashik</p>
+        </footer>
       </>}
       {page === "student" && <section className="portal">
         <Back onClick={goHome}/><h2>Student Gate Pass Request</h2>
