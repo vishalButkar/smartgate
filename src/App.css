@@ -1776,3 +1776,68 @@ footer {
   .role-card h2 { font-size: 14px; }
   .role-card p { font-size: 10px; }
 }
+
+/* Faculty Gate Pass and refreshed SmartGate layout */
+.role-icon { font-size: 42px; }
+.role-card:nth-child(1) { background: #e5f3ff; }
+.role-card:nth-child(1) h2 { color: #0755a0; }
+.role-card:nth-child(1) button { background: #0755a0; }
+.role-card:nth-child(2) { background: #e5f8ed; }
+.role-card:nth-child(2) h2 { color: #07884b; }
+.role-card:nth-child(2) button { background: #07884b; }
+.role-card:nth-child(3) { background: #f0e9ff; }
+.role-card:nth-child(3) h2 { color: #59309b; }
+.role-card:nth-child(3) button { background: #59309b; }
+.role-card:nth-child(4) { background: #fff0e5; }
+.role-card:nth-child(4) h2 { color: #c44a00; }
+.role-card:nth-child(4) button { background: #c44a00; }
+.portal { width: 100%; max-width: 760px; margin: 0 auto; padding: 28px; background: #fff; border-radius: 14px; box-shadow: 0 4px 16px rgba(0,0,0,.08); }
+.portal h2 { color: #0b3970; margin-top: 8px; }
+.portal h3 { color: #0b3970; margin-top: 28px; }
+.portal form label { display:block; margin:15px 0 7px; font-weight:600; color:#173b62; }
+.portal form input, .portal form select, .portal form textarea { width:100%; padding:12px; border:1px solid #cbd5e1; border-radius:8px; font:inherit; background:#fff; }
+.portal form input:disabled { background:#f1f5f9; color:#475569; }
+.portal form textarea { min-height:86px; resize:vertical; }
+.portal form button, .portal > form button { width:100%; margin-top:20px; padding:13px; border:0; border-radius:8px; background:#0b3970; color:white; font-weight:700; cursor:pointer; }
+.portal button:disabled { opacity:.6; cursor:not-allowed; }
+.portal-head { display:flex; justify-content:space-between; align-items:flex-start; gap:16px; }
+.portal-head p { margin:6px 0; }
+.secondary-role-button, .back-button { border:1px solid #0b3970; background:#fff; color:#0b3970; padding:10px 14px; border-radius:8px; font-weight:600; cursor:pointer; }
+.request-card { margin:16px 0; padding:18px; border:1px solid #dbe4ef; border-radius:10px; background:#fbfdff; }
+.request-card p { margin:8px 0; line-height:1.45; }
+.action-buttons { display:flex; gap:10px; margin-top:14px; }
+.action-buttons button { flex:1; padding:11px; border:0; border-radius:7px; background:#16834a; color:white; font-weight:700; cursor:pointer; }
+.action-buttons button.reject { background:#c0392b; }
+.status { display:inline-block; padding:7px 11px; margin-top:8px; border-radius:6px; font-weight:800; font-size:13px; background:#fff2cc; color:#8a5b00; }
+.status.approved { background:#dcfce7; color:#166534; }
+.status.rejected { background:#fee2e2; color:#991b1b; }
+.notice { max-width:900px; margin:0 auto 18px; padding:12px 15px; border-radius:8px; display:flex; justify-content:space-between; gap:12px; }
+.notice.error { background:#fee2e2; color:#991b1b; }
+.notice.success { background:#dcfce7; color:#166534; }
+.notice button { border:0; background:transparent; font-size:20px; cursor:pointer; }
+.small-note { color:#64748b; font-size:13px; line-height:1.5; }
+.student-detail { display:grid; gap:7px; padding:14px; margin:15px 0; border-radius:8px; background:#f1f7fd; }
+.footer-project { width:100%; justify-content:center; text-align:center; margin-top:30px; }
+.creator-link { color:white; background:#0755a0; padding:5px 10px; border-radius:5px; text-decoration:none; }
+.app-footer { margin-top:24px; }
+.link-button { background:transparent; color:white; border:0; text-decoration:underline; cursor:pointer; }
+@media (max-width:900px) { .cards { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media (max-width:600px) {
+ .main-content { padding:18px 12px; }
+ .top-header { gap:10px; }
+ .cards { grid-template-columns:1fr; gap:12px; }
+ .role-card { min-height:0; padding:17px; }
+ .role-card p { margin:5px 0 12px; }
+ .portal { padding:18px 14px; }
+ .portal-head { flex-direction:column; }
+ .portal-head .secondary-role-button { width:100%; }
+ .action-buttons { flex-direction:column; }
+ .faculty-pass-portal form input, .faculty-pass-portal form select { font-size:16px; }
+ .footer-project { padding:15px; }
+}
+
+
+/* Faculty ERP login and first-time activation */
+.inline-link-button { display:inline !important; width:auto !important; margin:0 !important; padding:0 !important; border:0 !important; background:transparent !important; color:#0755a0 !important; text-decoration:underline; font:inherit; font-weight:700; cursor:pointer; }
+.portal .small-note { line-height:1.6; }
+.portal form input:focus { outline:2px solid #93c5fd; outline-offset:1px; }
